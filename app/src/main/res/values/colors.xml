@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="wave">#00b99a</color>
+    <color name="bn_unfocused">#faf6d5</color>
+    <color name="bn_focused">#aca98f</color>
+    <color name="bn_normal">#f8f6e7</color>
+</resources>

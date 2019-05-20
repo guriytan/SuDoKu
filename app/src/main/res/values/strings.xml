@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Sudoku</string>
+    <string name="new_game">新游戏</string>
+    <string name="restart">重新开始</string>
+    <string name="level">选择难度</string>
+    <string name="casual">入门</string>
+    <string name="easy">容易</string>
+    <string name="mid">中等</string>
+    <string name="hard">困难</string>
+</resources>

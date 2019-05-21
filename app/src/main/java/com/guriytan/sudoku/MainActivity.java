@@ -7,33 +7,42 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
+import com.guriytan.sudoku.dao.Generator;
 import com.guriytan.sudoku.handler.LoadingHandler;
 import com.guriytan.sudoku.listener.OnTouch;
 import com.guriytan.sudoku.view.PadButton;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class MainActivity extends Activity {
     public GridLayout pad;
     public ProgressBar progressBar;
-    private LoadingHandler loadingHandler;
     public PadButton[][] padBtn = new PadButton[9][9];
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
+    private LoadingHandler loadingHandler = new LoadingHandler(this,threadPool);
     private String[] chars = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    public Problem problem = new Problem();
     public int[][] sudokuMartix = new int[9][9]; // 用于显示的数独
     public int[][] sudokuPad = new int[9][9]; // 储存玩家填写后的数独
     private int systemLevel = 2;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
+        Future<int[][]> res = threadPool.submit(new Generator(systemLevel));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         progressBar = findViewById(R.id.progress);
-        loadingHandler = new LoadingHandler(this);
         Toolbar bar = findViewById(R.id.toolbar); // 设置菜单栏
         setActionBar(bar);
         bar.setNavigationIcon(R.drawable.icon);
         pad = findViewById(R.id.pad);
-        sudokuMartix = problem.get(systemLevel);
+        try {
+            sudokuMartix = res.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (int i = 0; i < sudokuMartix.length; i++) {// 形成数独主面板
             for (int j = 0; j < sudokuMartix[0].length; j++) {
                 padBtn[i][j] = new PadButton(this, sudokuMartix[i][j]);
@@ -85,6 +94,9 @@ public class MainActivity extends Activity {
                 break;
             case R.id.hard: // 选择困难难度
                 new Draw(4).start();
+                break;
+            case R.id.tooHard: // 选择困难难度
+                new Draw(5).start();
                 break;
         }
         return true;

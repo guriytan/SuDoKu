@@ -7,15 +7,20 @@ import android.view.WindowManager;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.Wave;
 import com.guriytan.sudoku.MainActivity;
+import com.guriytan.sudoku.dao.Generator;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public class LoadingHandler extends Handler {
 
     private WeakReference<MainActivity> mWeakActivity;
+    private ExecutorService threadPool;
 
-    public LoadingHandler(MainActivity activity) {
+    public LoadingHandler(MainActivity activity, ExecutorService threadPool) {
         mWeakActivity = new WeakReference<>(activity);
+        this.threadPool = threadPool;
     }
 
     @Override
@@ -35,7 +40,17 @@ public class LoadingHandler extends Handler {
                     // 数独库有数独，生成新盘
                     activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     activity.progressBar.setVisibility(View.GONE);
-                    activity.sudokuMartix = activity.problem.get(msg.arg1);
+                    Future<int[][]> res = threadPool.submit(new Generator(msg.arg1));
+                    while (true) {
+                        if (res.isDone()) {
+                            try {
+                                activity.sudokuMartix = res.get();
+                                break;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                     for (int i = 0; i < activity.sudokuMartix.length; i++) {
                         for (int j = 0; j < activity.sudokuMartix[0].length; j++) {
                             activity.padBtn[i][j].generate(activity.sudokuMartix[i][j]); // 使用新生成的数独矩阵数据

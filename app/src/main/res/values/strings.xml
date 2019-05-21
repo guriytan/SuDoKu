@@ -7,4 +7,5 @@
     <string name="easy">容易</string>
     <string name="mid">中等</string>
     <string name="hard">困难</string>
+    <string name="tooHard">极难</string>
 </resources>

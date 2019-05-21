@@ -26,6 +26,9 @@
             <item
                 android:id="@+id/hard"
                 android:title="@string/hard"/>
+            <item
+                android:id="@+id/tooHard"
+                android:title="@string/tooHard"/>
         </menu>
     </item>
 </menu>
